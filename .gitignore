@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# 9router runtime data (NEVER commit these - contains API keys!)
+db.json
+db.json.bak
+db.json.backup.*
+request-details.json
+usage.json
+log.txt
+logs/
+tunnel/state.json
+
+# Runtime downloaded files
+runtime/
+
+# Backups created by edit scripts
+*.bak-*
+*.bak-localonly-*
+*.bak-noleak-*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Build output
+dist/
+build/
+
+# Next.js build output (may contain secrets in compiled chunks)
+.next/
+app/.next/
