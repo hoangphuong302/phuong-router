@@ -540,7 +540,7 @@ function startServer(latestVersion) {
     const child = spawn(RUNTIME, ["--max-old-space-size=6144", serverPath], {
       cwd: standaloneDir,
       stdio: showLog ? "inherit" : ["ignore", "ignore", "pipe"],
-      detached: true,
+      detached: false,
       windowsHide: true,
       env: {
         ...buildEnvWithRuntime(process.env),
@@ -633,15 +633,20 @@ function startServer(latestVersion) {
 
   // Tray-only mode: no TUI, just tray icon
   if (trayMode) {
-    console.log(`\nðŸš€ ${pkg.name} v${pkg.version}`);
+    console.log(`\n🚀 ${pkg.name} v${pkg.version}`);
     console.log(`Server: http://${displayHost}:${port}`);
+
+    // Keep event loop alive so child server process stays running
+    const keepAlive = setInterval(() => {}, 60000);
 
     setTimeout(() => {
       initTrayIcon();
-      console.log("\nðŸ’¡ Router is now running in system tray. Close this terminal if you want.");
+      console.log("\n💡 Router is now running in system tray. Close this terminal if you want.");
       console.log("   Right-click tray icon to open dashboard or quit.\n");
     }, 2000);
 
+    // Cleanup keepAlive on exit
+    process.on("exit", () => clearInterval(keepAlive));
     return;
   }
 
