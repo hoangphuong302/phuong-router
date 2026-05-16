@@ -55,6 +55,14 @@ try { ensureSqliteRuntime({ silent: true }); } catch {}
 const APP_NAME = pkg.name; // Use from package.json
 const INSTALL_CMD_LATEST = `npm i -g ${APP_NAME}@latest --prefer-online`;
 
+// ============================================================
+// PRIVATE FORK — phuong-router by hoangphuong302
+// Auto-update is permanently disabled: this is a personal fork
+// and does NOT exist on npm. Updates are managed via GitHub:
+//   https://github.com/hoangphuong302/phuong-router
+// ============================================================
+skipUpdate = true;  // Force-disable before arg parsing
+
 const DEFAULT_PORT = 20128;
 const DEFAULT_HOST = "127.0.0.1";
 const MAX_PORT_ATTEMPTS = 10;
@@ -388,53 +396,39 @@ function isRestrictedEnvironment() {
   return null;
 }
 
-// Check if new version available, return latest version or null
+// Check if new version available — DISABLED for private fork.
+// phuong-router is not published to npm. Track updates via GitHub:
+//   https://github.com/hoangphuong302/phuong-router
 function checkForUpdate() {
-  return new Promise((resolve) => {
-    if (skipUpdate) {
-      resolve(null);
-      return;
-    }
+  return Promise.resolve(null);
+}
 
-    const spinner = createSpinner("Checking for updates...").start();
-    let resolved = false;
+// Print security-aware startup banner for private fork
+function printPrivateBanner(displayHost, port) {
+  const dataDir = getAppDataDir();
+  const tunnelStatePath = path.join(dataDir, "tunnel", "state.json");
+  let tunnelUrl = null;
+  try {
+    const st = JSON.parse(fs.readFileSync(tunnelStatePath, "utf8"));
+    if (st && st.tunnelUrl) tunnelUrl = st.tunnelUrl;
+  } catch { /* no tunnel */ }
 
-    const safetyTimeout = setTimeout(() => {
-      if (!resolved) {
-        resolved = true;
-        spinner.stop();
-        resolve(null);
-      }
-    }, 8000);
-
-    const done = (version) => {
-      if (resolved) return;
-      resolved = true;
-      clearTimeout(safetyTimeout);
-      spinner.stop();
-      resolve(version);
-    };
-
-    const req = https.get(`https://registry.npmjs.org/${pkg.name}/latest`, { timeout: 3000 }, (res) => {
-      let data = "";
-      res.on("data", chunk => data += chunk);
-      res.on("end", () => {
-        try {
-          const latest = JSON.parse(data);
-          if (latest.version && compareVersions(latest.version, pkg.version) > 0) {
-            done(latest.version);
-          } else {
-            done(null);
-          }
-        } catch (e) {
-          done(null);
-        }
-      });
-    });
-
-    req.on("error", () => done(null));
-    req.on("timeout", () => { req.destroy(); done(null); });
-  });
+  console.log("\n" + "=".repeat(58));
+  console.log("  phuong-router — PRIVATE FORK (hoangphuong302)");
+  console.log("  Audited. No telemetry. No auto-update.");
+  console.log("  Source: https://github.com/hoangphuong302/phuong-router");
+  console.log("=" .repeat(58));
+  console.log(`  Dashboard : http://${displayHost}:${port}/dashboard`);
+  console.log(`  Version   : ${pkg.version} (based on 9router v0.4.29)`);
+  if (tunnelUrl) {
+    console.log(`  Tunnel    : ${tunnelUrl}`);
+    console.log("  [!] WARNING: Cloudflare tunnel is ACTIVE.");
+    console.log("      Anyone with this URL can call your API & use your keys.");
+    console.log("      Disable in: Dashboard > Settings > Tunnel");
+  } else {
+    console.log("  Tunnel    : OFF (localhost only — secure)");
+  }
+  console.log("=" .repeat(58) + "\n");
 }
 
 // Open browser
@@ -651,8 +645,7 @@ function startServer(latestVersion) {
 
   // Tray-only mode: no TUI, just tray icon
   if (trayMode) {
-    console.log(`\n🚀 ${pkg.name} v${pkg.version}`);
-    console.log(`Server: http://${displayHost}:${port}`);
+    printPrivateBanner(displayHost, port);
 
     // Keep event loop alive so child server process stays running
     const keepAlive = setInterval(() => {}, 60000);
