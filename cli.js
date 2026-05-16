@@ -57,11 +57,9 @@ const INSTALL_CMD_LATEST = `npm i -g ${APP_NAME}@latest --prefer-online`;
 
 // ============================================================
 // PRIVATE FORK — phuong-router by hoangphuong302
-// Auto-update is permanently disabled: this is a personal fork
-// and does NOT exist on npm. Updates are managed via GitHub:
-//   https://github.com/hoangphuong302/phuong-router
+// Auto-update permanently disabled (not published on npm).
+// Track updates via: https://github.com/hoangphuong302/phuong-router
 // ============================================================
-skipUpdate = true;  // Force-disable before arg parsing
 
 const DEFAULT_PORT = 20128;
 const DEFAULT_HOST = "127.0.0.1";
@@ -75,7 +73,7 @@ const PROCESS_IDENTIFIERS = [
 let port = DEFAULT_PORT;
 let host = DEFAULT_HOST;
 let noBrowser = false;
-let skipUpdate = false;
+let skipUpdate = true;  // Private fork — auto-update disabled permanently
 let showLog = false;
 let trayMode = false;
 
