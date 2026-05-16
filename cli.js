@@ -457,13 +457,31 @@ function openBrowser(url) {
   });
 }
 
-// Find standalone server (bundled in bin/app for published package)
-const standaloneDir = path.join(__dirname, "app");
+// Find standalone server
+// Fork's app/ has no node_modules (gitignored), so fall back to npm global's app/
+// which has Next.js + all deps pre-built. Only cli.js + src/ are from fork.
+function findServerDir() {
+  // 1. Fork's own app/ if it has node_modules
+  const forkApp = path.join(__dirname, "app");
+  if (fs.existsSync(path.join(forkApp, "node_modules", "next"))) return forkApp;
+
+  // 2. npm global 9router (original package, has full node_modules)
+  const npmGlobal = path.join(
+    process.env.APPDATA || path.join(os.homedir(), "AppData", "Roaming"),
+    "npm", "node_modules", "9router", "app"
+  );
+  if (fs.existsSync(path.join(npmGlobal, "server.js"))) return npmGlobal;
+
+  // 3. Same dir as __dirname / app (installed globally as phuong-router)
+  return forkApp;
+}
+
+const standaloneDir = findServerDir();
 const serverPath = path.join(standaloneDir, "server.js");
 
 if (!fs.existsSync(serverPath)) {
-  console.error("Error: Standalone build not found.");
-  console.error("Please run 'npm run build:cli' first.");
+  console.error("Error: Standalone build not found at: " + serverPath);
+  console.error("Run: npm install -g 9router  (to restore app/ build)");
   process.exit(1);
 }
 
