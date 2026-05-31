@@ -1,112 +1,105 @@
-# 9Router - FREE AI Router & Token Saver
+# 🛣️ phuong-router — Personal Fork của 9Router CLI
 
-**Never stop coding. Save 20-40% tokens with RTK + auto-fallback to FREE & cheap AI models.**
+> **Fork cá nhân của 9Router CLI, tùy chỉnh cho Nhà Sam Aura ecosystem.**
+> 9Router là công cụ CLI/proxy AI routing, cho phép tích hợp nhiều AI provider (OpenAI, Gemini, Anthropic...) qua 1 endpoint duy nhất.
 
-**Connect All AI Code Tools (Claude Code, Cursor, Antigravity, Copilot, Codex, Gemini, OpenCode, Cline, OpenClaw...) to 40+ AI Providers & 100+ Models.**
-
-[![npm](https://img.shields.io/npm/v/9router.svg)](https://www.npmjs.com/package/9router)
-[![Downloads](https://img.shields.io/npm/dm/9router.svg)](https://www.npmjs.com/package/9router)
-[![License](https://img.shields.io/npm/l/9router.svg)](https://github.com/decolua/9router/blob/main/LICENSE)
-
-<a href="https://trendshift.io/repositories/22628" target="_blank"><img src="https://trendshift.io/api/badge/repositories/22628" alt="decolua%2F9router | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
-
-[🌐 Website](https://9router.com) • [📖 Full Docs](https://github.com/decolua/9router)
+[![GitHub](https://img.shields.io/badge/GitHub-phuong--router-blue)](https://github.com/hoangphuong302/phuong-router)
+[![Upstream](https://img.shields.io/badge/Upstream-9router-gray)](https://github.com/decolua/9router)
 
 ---
 
-## 🤔 Why 9Router?
+## 🤖 Dành Cho AI Agent — Đọc Trước!
 
-**Stop wasting money, tokens and hitting limits:**
+| Mục | Thông tin |
+|---|---|
+| **Dự án** | Personal fork của 9Router CLI |
+| **GitHub** | `hoangphuong302/phuong-router` (fork của `decolua/9router`) |
+| **Branch chính** | `main` |
+| **Thư mục** | `C:\Workspace\my-9router` |
+| **Chạy tại** | Port 20128 (9Router AI proxy server) |
+| **PM2 app** | Không có (standalone CLI) |
+| **Deploy action** | git pull → restart nếu đang chạy |
 
-- ❌ Subscription quota expires unused every month
-- ❌ Rate limits stop you mid-coding
-- ❌ Tool outputs (git diff, grep, ls...) burn tokens fast
-- ❌ Expensive APIs ($20-50/month per provider)
-
-**9Router solves this:**
-
-- ✅ **RTK Token Saver** - Auto-compress tool_result, save 20-40% tokens
-- ✅ **Maximize subscriptions** - Track quota, use every bit before reset
-- ✅ **Auto fallback** - Subscription → Cheap → Free, zero downtime
-- ✅ **Multi-account** - Round-robin between accounts per provider
-- ✅ **Universal** - Works with any OpenAI/Claude-compatible CLI
-
----
-
-## ⚡ Quick Start
-
-**1. Install & run:**
+### ⚡ Quy Trình Cho AI Agent
 
 ```bash
-npm install -g 9router
-9router
+# Sửa customizations (thường ở src/ hoặc app/)
+# Commit và push
+git add -A
+git commit -m "v0.x.x: Custom AI routing cho Nhà Sam"
+git push origin main
 
-# Or run directly with npx
-npx 9router
+# → Server tự git pull
+# → Restart 9router nếu đang chạy
 ```
 
-🎉 Dashboard opens at `http://localhost:20128`
-
-**2. Connect a FREE provider (no signup needed):**
-
-Dashboard → Providers → Connect **Kiro AI** (free Claude unlimited) or **OpenCode Free** (no auth) → Done!
-
-**3. Use in your CLI tool:**
-
-```
-Claude Code/Codex/OpenClaw/Cursor/Cline Settings:
-  Endpoint: http://localhost:20128/v1
-  API Key:  [copy from dashboard]
-  Model:    kr/claude-sonnet-4.5
-```
-
-That's it! Start coding with FREE AI models.
+### ⚠️ Đây là fork
+- **Upstream**: `decolua/9router` — không sửa upstream code
+- Chỉ sửa các file customization của `hoangphuong302`
+- Sync từ upstream: `git pull upstream main`
 
 ---
 
-## 🚀 CLI Options
+## 🖥️ Infrastructure
+
+```
+[Windows PC - 100.112.62.110]
+└── 9Router CLI (phuong-router)
+    ├── Port 20128 (AI proxy)
+    └── Tích hợp với AuraDashboard qua http://127.0.0.1:20128
+```
+
+9Router hoạt động như một AI API proxy:
+- Nhận requests kiểu OpenAI API format
+- Route đến provider phù hợp (Gemini, OpenAI, Anthropic...)
+- Quản lý API keys tập trung
+
+---
+
+## 🔄 CI/CD — Auto Git Pull
+
+Khi push lên GitHub:
+1. Webhook trigger git pull
+2. Deploy script `deploy-9router.cmd` kéo code mới
+3. Nếu có PM2 app `phuong-router` → restart tự động
+
+---
+
+## 📋 Quy Trình Git
 
 ```bash
-9router                    # Start with default settings
-9router --port 8080        # Custom port
-9router --no-browser       # Don't open browser
-9router --skip-update      # Skip auto-update check
-9router --help             # Show all options
+# Clone
+git clone https://github.com/hoangphuong302/phuong-router.git my-9router
+cd my-9router
+
+# Thêm upstream (chỉ cần 1 lần)
+git remote add upstream https://github.com/decolua/9router.git
+
+# Sync từ upstream
+git fetch upstream
+git merge upstream/main
+
+# Commit customizations
+git add -A
+git commit -m "v0.2.1: Thêm custom model routing cho Gemini Pro"
+git push origin main
 ```
 
-**Dashboard**: `http://localhost:20128/dashboard`
+---
+
+## 📁 Cấu Trúc File
+
+```
+my-9router/
+├── cli.js          → CLI entry point
+├── src/            → Source code
+├── app/            → App logic/UI
+├── hooks/          → PostInstall hooks
+├── package.json    → Dependencies (name: phuong-router)
+└── README.md
+```
 
 ---
 
-## 🛠️ Supported CLI Tools
-
-Claude-Code • OpenClaw • Codex • OpenCode • Cursor • Antigravity • Cline • Continue • Droid • Roo • Copilot • Kilo Code • Gemini CLI • Qwen Code • iFlow • Crush • Crusher • Aider
-
-Any tool supporting OpenAI/Claude-compatible API works.
-
----
-
-## 💾 Data Location
-
-- **macOS/Linux**: `~/.9router/db.json`
-- **Windows**: `%APPDATA%/9router/db.json`
-
----
-
-## 📚 Documentation
-
-Full docs, advanced setup, video tutorials & development guide:
-
-- **GitHub**: https://github.com/decolua/9router
-- **Full README**: https://github.com/decolua/9router/blob/main/app/README.md
-- **Website**: https://9router.com
-
----
-
-## 🙏 Acknowledgments
-
-- **[CLIProxyAPI](https://github.com/router-for-me/CLIProxyAPI)** - Original Go implementation
-
-## 📄 License
-
-MIT License - see [LICENSE](LICENSE) for details.
+*Một phần của **Nhà Sam Aura** AI ecosystem.*
+*README cập nhật lần cuối: 2026-05-31*
